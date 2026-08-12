@@ -13,6 +13,14 @@ export default function RepositoriesPage() {
   const [connectedRepos, setConnectedRepos] = useState<ConnectedRepository[]>([])
   const [loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState<number | null>(null)
+  const [syncing, setSyncing] = useState<string | null>(null)
+  const [syncResult, setSyncResult] = useState<{
+    commits: number
+    pull_requests: number
+    issues: number
+    releases: number
+    contributors: number
+  } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -84,6 +92,36 @@ export default function RepositoriesPage() {
     }
   }
 
+  async function syncRepository(repoId: string) {
+    try {
+      setSyncing(repoId)
+      setSyncResult(null)
+
+      const res = await fetch(`/api/repositories/${repoId}/sync`, {
+        method: 'POST',
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error ?? 'Sync failed')
+      }
+
+      // Refresh connected repos to show updated status
+      const connectedRes = await fetch('/api/repositories')
+      if (connectedRes.ok) {
+        const connectedData = await connectedRes.json()
+        setConnectedRepos(connectedData.repositories)
+      }
+
+      setSyncResult(data.synced)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Sync failed')
+    } finally {
+      setSyncing(null)
+    }
+  }
+
   const isConnected = (githubId: number) =>
     connectedRepos.some((r) => r.github_id === githubId)
 
@@ -133,8 +171,8 @@ export default function RepositoriesPage() {
       </div>
 
       {connectedRepos.length > 0 && (
-        <div>
-          <h2 className="text-sm font-medium text-muted-foreground mb-3">
+        <div className="space-y-3">
+          <h2 className="text-sm font-medium text-muted-foreground">
             Connected ({connectedRepos.length})
           </h2>
           <div className="grid gap-3">
@@ -148,13 +186,39 @@ export default function RepositoriesPage() {
                       {repo.description && (
                         <p className="text-xs text-muted-foreground">{repo.description}</p>
                       )}
+                      {repo.last_synced_at && (
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Last synced: {new Date(repo.last_synced_at).toLocaleString()}
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <Badge variant="secondary">{repo.sync_status}</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">{repo.sync_status}</Badge>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={syncing === repo.id}
+                      onClick={() => syncRepository(repo.id)}
+                    >
+                      {syncing === repo.id ? 'Syncing...' : 'Sync'}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
           </div>
+
+          {syncResult && (
+            <div className="rounded-md bg-primary/5 border border-primary/20 p-4 text-sm">
+              <p className="font-medium mb-1">Sync complete</p>
+              <p className="text-muted-foreground">
+                {syncResult.commits} commits · {syncResult.pull_requests} pull requests ·{' '}
+                {syncResult.issues} issues · {syncResult.releases} releases ·{' '}
+                {syncResult.contributors} contributors
+              </p>
+            </div>
+          )}
         </div>
       )}
 
