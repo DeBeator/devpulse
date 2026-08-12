@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { LayoutDashboard, BarChart2, Shield, Lightbulb, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, GitBranch, BarChart2, Shield, Lightbulb, Settings, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const navItems = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { label: 'Repositories', href: '/repositories', icon: GitBranch },
   { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart2 },
   { label: 'Security', href: '/dashboard/security', icon: Shield },
   { label: 'Insights', href: '/dashboard/insights', icon: Lightbulb },
