@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import HealthScoreActions from './health-score-actions'
+import InsightsPanel from './insights-panel'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -55,6 +56,13 @@ export default async function RepositoryDetailPage({ params }: Props) {
     .order('calculated_at', { ascending: false })
     .limit(1)
     .single()
+
+  const { data: insightsData } = await supabase
+    .from('insights')
+    .select('*')
+    .eq('repository_id', id)
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
 
   const overallColor = healthScore
     ? healthScore.overall >= 80
@@ -137,6 +145,18 @@ export default async function RepositoryDetailPage({ params }: Props) {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Insights</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <InsightsPanel
+            repositoryId={id}
+            initialInsights={insightsData ?? []}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
