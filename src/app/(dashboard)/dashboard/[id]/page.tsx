@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import HealthScoreActions from './health-score-actions'
 import InsightsPanel from './insights-panel'
+import SecurityPanel from './security-panel'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -63,6 +64,20 @@ export default async function RepositoryDetailPage({ params }: Props) {
     .eq('repository_id', id)
     .eq('status', 'active')
     .order('created_at', { ascending: false })
+
+  const { data: securityScans } = await supabase
+    .from('security_scans')
+    .select('*')
+    .eq('repository_id', id)
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  const { data: securityFindings } = await supabase
+    .from('security_findings')
+    .select('*')
+    .eq('repository_id', id)
+    .eq('status', 'open')
+    .order('severity', { ascending: true })
 
   const overallColor = healthScore
     ? healthScore.overall >= 80
@@ -154,6 +169,19 @@ export default async function RepositoryDetailPage({ params }: Props) {
           <InsightsPanel
             repositoryId={id}
             initialInsights={insightsData ?? []}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Security</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SecurityPanel
+            repositoryId={id}
+            initialFindings={securityFindings ?? []}
+            initialScans={securityScans ?? []}
           />
         </CardContent>
       </Card>
