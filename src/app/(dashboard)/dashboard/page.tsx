@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { GitBranch, Plus, Activity } from 'lucide-react'
+import CalculateHealthButton from './calculate-health-button'
 
 import type { HealthScore } from '@/types'
 
@@ -143,11 +144,7 @@ export default async function DashboardPage() {
                     <p className="text-sm text-muted-foreground">
                       No health score yet.
                     </p>
-                    <form action={`/api/repositories/${repo.id}/health`} method="POST">
-                      <Button size="sm" variant="outline" className="w-full" type="submit">
-                        Calculate Health Score
-                      </Button>
-                    </form>
+                    <CalculateHealthButton repositoryId={repo.id} />
                   </div>
                 )}
               </CardContent>
