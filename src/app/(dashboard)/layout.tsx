@@ -1,18 +1,9 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { LayoutDashboard, GitBranch, BarChart2, Shield, Lightbulb, Settings, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-
-const navItems = [
-  { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Repositories', href: '/repositories', icon: GitBranch },
-  { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart2 },
-  { label: 'Security', href: '/dashboard/security', icon: Shield },
-  { label: 'Insights', href: '/dashboard/insights', icon: Lightbulb },
-  { label: 'Settings', href: '/dashboard/settings', icon: Settings },
-]
+import DashboardNav from './nav'
 
 export default async function DashboardLayout({
   children,
@@ -38,18 +29,7 @@ export default async function DashboardLayout({
         <div className="h-14 flex items-center px-6 border-b">
           <span className="font-semibold text-lg">DevPulse</span>
         </div>
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <DashboardNav />
         <div className="p-3 border-t flex items-center gap-3">
           <Avatar className="h-8 w-8">
             <AvatarImage src={avatarUrl} />
