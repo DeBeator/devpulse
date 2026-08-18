@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Send, Bot, User } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+
 
 interface Message {
   role: 'user' | 'assistant'
@@ -117,8 +119,16 @@ export default function AIAssistant({
                     : 'bg-secondary'
                 }`}
               >
-                {msg.content}
+                {msg.role === 'assistant' ? (
+                  <div className="prose prose-sm dark:prose-invert max-w-none">
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
+                ) : (
+                  msg.content
+                )}
+
               </div>
+
             </div>
           ))
         )}
