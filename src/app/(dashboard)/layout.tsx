@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import DashboardNav from './nav'
 import ThemeToggle from '@/components/theme-toggle'
+import ScrollToTop from '@/components/scroll-to-top'
 
 export default async function DashboardLayout({
   children,
@@ -53,9 +54,11 @@ export default async function DashboardLayout({
           <ThemeToggle />
         </header>
         <main className="flex-1 overflow-y-auto p-6">
+          <ScrollToTop />
           {children}
         </main>
       </div>
     </div>
   )
 }
+
