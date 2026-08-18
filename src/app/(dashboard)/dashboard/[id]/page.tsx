@@ -5,6 +5,9 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import HealthScoreActions from './health-score-actions'
 import InsightsPanel from './insights-panel'
 import SecurityPanel from './security-panel'
+import AIAssistant from './ai-assistant'
+import { Bot } from 'lucide-react'
+
 
 interface Props {
   params: Promise<{ id: string }>
@@ -185,6 +188,19 @@ export default async function RepositoryDetailPage({ params }: Props) {
           />
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Bot className="h-4 w-4" />
+            AI Assistant
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AIAssistant repositoryId={id} />
+        </CardContent>
+      </Card>
     </div>
+
   )
 }
