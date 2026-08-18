@@ -125,9 +125,10 @@ export async function POST(
     }))
 
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-3.6-flash',
       systemInstruction: systemPrompt,
     })
+
 
     const chat = model.startChat({
       history: geminiHistory,
