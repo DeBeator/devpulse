@@ -1,12 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { TrendingUp, TrendingDown, Minus, Bot, BarChart2 } from 'lucide-react'
 import HealthScoreActions from './health-score-actions'
 import InsightsPanel from './insights-panel'
 import SecurityPanel from './security-panel'
 import AIAssistant from './ai-assistant'
-import { Bot } from 'lucide-react'
+
+
 
 
 interface Props {
@@ -92,12 +95,21 @@ export default async function RepositoryDetailPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">{repository.full_name}</h1>
-        {repository.description && (
-          <p className="text-muted-foreground mt-1">{repository.description}</p>
-        )}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">{repository.full_name}</h1>
+          {repository.description && (
+            <p className="text-muted-foreground mt-1">{repository.description}</p>
+          )}
+        </div>
+        <Button asChild variant="outline" size="sm">
+          <Link href={`/dashboard/${id}/analytics`}>
+            <BarChart2 className="h-4 w-4 mr-2" />
+            Analytics
+          </Link>
+        </Button>
       </div>
+
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="md:col-span-1">
