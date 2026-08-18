@@ -8,6 +8,8 @@ import HealthScoreActions from './health-score-actions'
 import InsightsPanel from './insights-panel'
 import SecurityPanel from './security-panel'
 import AIAssistant from './ai-assistant'
+import AnimatedScore from '@/components/animated-score'
+
 
 
 
@@ -120,11 +122,13 @@ export default async function RepositoryDetailPage({ params }: Props) {
             {healthScore ? (
               <div className="space-y-4">
                 <div className="text-center">
-                  <span className={`text-6xl font-bold ${overallColor}`}>
-                    {healthScore.overall}
-                  </span>
+                  <AnimatedScore
+                    score={healthScore.overall}
+                    className={`text-6xl font-bold ${overallColor}`}
+                  />
                   <span className="text-muted-foreground text-xl"> / 100</span>
                 </div>
+
                 <div className="space-y-3">
                   <ScoreBar score={healthScore.activity} label="Activity" />
                   <ScoreBar score={healthScore.pull_requests} label="Pull Requests" />
