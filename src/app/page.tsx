@@ -134,8 +134,9 @@ export default function LandingPage() {
 
       {/* Hero — full viewport, sits above fixed video */}
       <section className="relative z-10 w-full h-screen flex flex-col items-center justify-center">
-        <div className="text-center px-8 max-w-4xl mx-auto">
+        <div className="text-center px-8 max-w-4xl mx-auto pt-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/20 text-xs text-white/60 mb-8 bg-white/5 backdrop-blur-sm">
+
             <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
             Now in beta
           </div>
