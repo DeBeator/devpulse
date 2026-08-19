@@ -1,4 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
+import { createGitHubClient } from '@/lib/github/client'
+import { getGitHubToken } from '@/lib/github/token'
+import {
+  syncCommits,
+  syncPullRequests,
+  syncIssues,
+  syncReleases,
+  syncContributors,
+} from '@/lib/github/sync'
 import { NextRequest, NextResponse } from 'next/server'
 
 interface ConnectRepositoryBody {
@@ -74,6 +83,87 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to connect repository' },
         { status: 500 }
       )
+    }
+
+    // Auto-sync immediately after connecting
+    try {
+      const accessToken = await getGitHubToken(user.id)
+      if (accessToken && repository) {
+        const [owner, repo] = repository.full_name.split('/')
+        const octokit = createGitHubClient(accessToken)
+
+        // Update sync status
+        await supabase
+          .from('repositories')
+          .update({ sync_status: 'syncing' })
+          .eq('id', repository.id)
+
+        const since = new Date()
+        since.setDate(since.getDate() - 90)
+
+        const [commits, pullRequests, issues, releases, contributors] =
+          await Promise.all([
+            syncCommits(octokit, owner, repo, since.toISOString()),
+            syncPullRequests(octokit, owner, repo),
+            syncIssues(octokit, owner, repo),
+            syncReleases(octokit, owner, repo),
+            syncContributors(octokit, owner, repo),
+          ])
+
+        if (commits.length > 0) {
+          await supabase.from('commits').upsert(
+            commits.map((c) => ({ ...c, repository_id: repository.id })),
+            { onConflict: 'repository_id,sha' }
+          )
+        }
+
+        if (pullRequests.length > 0) {
+          await supabase.from('pull_requests').upsert(
+            pullRequests.map((pr) => ({ ...pr, repository_id: repository.id })),
+            { onConflict: 'repository_id,github_id' }
+          )
+        }
+
+        if (issues.length > 0) {
+          await supabase.from('issues').upsert(
+            issues.map((issue) => ({
+              ...issue,
+              repository_id: repository.id,
+              labels: JSON.stringify(issue.labels),
+            })),
+            { onConflict: 'repository_id,github_id' }
+          )
+        }
+
+        if (releases.length > 0) {
+          await supabase.from('releases').upsert(
+            releases.map((r) => ({ ...r, repository_id: repository.id })),
+            { onConflict: 'repository_id,github_id' }
+          )
+        }
+
+        if (contributors.length > 0) {
+          await supabase.from('contributors').upsert(
+            contributors.map((c) => ({ ...c, repository_id: repository.id })),
+            { onConflict: 'repository_id,github_login' }
+          )
+        }
+
+        await supabase
+          .from('repositories')
+          .update({
+            sync_status: 'synced',
+            last_synced_at: new Date().toISOString(),
+          })
+          .eq('id', repository.id)
+      }
+    } catch (syncError) {
+      // Sync failure should not fail the connect
+      console.error('Auto-sync failed after connect:', syncError)
+      await supabase
+        .from('repositories')
+        .update({ sync_status: 'error' })
+        .eq('id', repository.id)
     }
 
     return NextResponse.json({ repository })
