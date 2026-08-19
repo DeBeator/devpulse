@@ -53,7 +53,8 @@ export default async function DashboardLayout({
           <span className="text-sm text-muted-foreground">Dashboard</span>
           <ThemeToggle />
         </header>
-        <main className="flex-1 overflow-y-auto p-6">
+        <main id="main-scroll" className="flex-1 overflow-y-auto p-6">
+
           <ScrollToTop />
           {children}
         </main>
