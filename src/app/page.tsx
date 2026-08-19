@@ -136,7 +136,6 @@ export default function LandingPage() {
       <section className="relative z-10 w-full h-screen flex flex-col items-center justify-center">
         <div className="text-center px-8 max-w-4xl mx-auto pt-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/20 text-xs text-white/60 mb-8 bg-white/5 backdrop-blur-sm">
-
             <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
             Now in beta
           </div>
@@ -176,6 +175,22 @@ export default function LandingPage() {
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
           <ChevronDown className="h-5 w-5 text-white/30" />
+        </div>
+      </section>
+
+      {/* Integration strip */}
+      <section className="relative z-10 w-full bg-background/95 border-t border-border/50">
+        <div className="w-full px-8 py-6">
+          <p className="text-center text-xs text-muted-foreground mb-4 tracking-wide uppercase">
+            Works with the tools you already use
+          </p>
+          <div className="flex items-center justify-center gap-8 flex-wrap">
+            {['GitHub', 'Git', 'Next.js', 'TypeScript', 'React', 'Node.js'].map((tool) => (
+              <span key={tool} className="text-sm text-muted-foreground/60 font-medium">
+                {tool}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -235,6 +250,49 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Who it's for */}
+        <section className="w-full bg-background border-t border-border">
+          <div className="w-full px-8 py-16">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl font-semibold mb-2">
+                Built for developers who care about their projects
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                Whether you work alone or with a team.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              {[
+                {
+                  title: 'Solo Developers',
+                  description:
+                    'Keep your side projects healthy and know which ones need attention — without manually checking each repository.',
+                },
+                {
+                  title: 'Open Source Maintainers',
+                  description:
+                    'Track project activity, contributor trends, releases, issues, and security findings across your open source work.',
+                },
+                {
+                  title: 'Small Teams',
+                  description:
+                    'Get a quick view of repository health without digging through GitHub. Know what needs attention before it becomes a problem.',
+                },
+              ].map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-lg border border-border/50 p-6 space-y-3 bg-card"
+                >
+                  <h3 className="font-medium text-sm">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Security */}
         <section className="w-full bg-background border-t border-border">
           <div className="w-full px-8 py-12 text-center">
@@ -258,20 +316,72 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* FAQ */}
+        <section className="w-full bg-muted/20 border-t border-border">
+          <div className="w-full px-8 py-16">
+            <h2 className="text-2xl font-semibold text-center mb-10">
+              Frequently asked questions
+            </h2>
+            <div className="max-w-2xl mx-auto space-y-6">
+              {[
+                {
+                  q: 'What is DevPulse?',
+                  a: 'DevPulse is a developer intelligence platform that connects to your GitHub repositories and turns raw data into actionable insights — health scores, analytics, security findings, and AI-powered explanations.',
+                },
+                {
+                  q: 'How does the health score work?',
+                  a: 'The health score is calculated deterministically across 7 categories: Activity, Pull Requests, Issues, Security, Releases, Contributors, and Documentation. Every score comes with a full explanation of the contributing factors.',
+                },
+                {
+                  q: 'What happens when I connect GitHub?',
+                  a: 'DevPulse uses GitHub OAuth to authenticate you. We request read access to your repositories to fetch commits, pull requests, issues, releases, and contributors. We never modify your code or repository settings.',
+                },
+                {
+                  q: 'Does DevPulse access my private repositories?',
+                  a: 'Yes, if you grant access. DevPulse uses the repo scope to access private repositories. Your data is stored securely and is only accessible to you.',
+                },
+                {
+                  q: 'Does DevPulse store my source code?',
+                  a: 'No. DevPulse only stores metadata — commit messages, PR titles, issue titles, contributor names, and release tags. We never store your actual source code.',
+                },
+                {
+                  q: 'How does the security scan work?',
+                  a: 'Security scanning is powered by Vaultless by FarukDev. It scans your repository files for exposed secrets, API keys, and credentials. Detected values are masked before storage — we never store complete secret values.',
+                },
+                {
+                  q: 'What is Vaultless?',
+                  a: 'Vaultless is an open-source secret scanner built by FarukDev. DevPulse uses it for repository security scanning with explicit permission from its creator.',
+                },
+                {
+                  q: 'Can I disconnect a repository?',
+                  a: 'Yes. You can disconnect any repository from the Repositories page at any time. This removes all associated data from DevPulse.',
+                },
+              ].map((item) => (
+                <div key={item.q} className="border-b border-border/50 pb-6 last:border-0 last:pb-0">
+                  <h3 className="text-sm font-medium mb-2">{item.q}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="w-full bg-muted/30 border-t border-border">
-          <div className="w-full px-8 py-16 text-center">
-            <h2 className="text-3xl font-bold mb-3">
-              Ready to understand your codebase?
+          <div className="w-full px-8 py-20 text-center">
+            <h2 className="text-4xl font-bold mb-3">
+              Your repository already has the answers.
             </h2>
-            <p className="text-muted-foreground text-sm mb-8 max-w-sm mx-auto">
-              Connect your GitHub repositories and get your first health score
-              in minutes.
+            <p className="text-muted-foreground text-sm mb-2 max-w-sm mx-auto">
+              DevPulse helps you find them.
+            </p>
+            <p className="text-muted-foreground text-xs mb-8 max-w-sm mx-auto">
+              Get your first repository health score in minutes.
             </p>
             <Button asChild size="lg">
               <Link href="/login">
                 <Github className="h-4 w-4 mr-2" />
-                Get started free
+                Connect GitHub →
               </Link>
             </Button>
           </div>
